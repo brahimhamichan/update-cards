@@ -9,7 +9,15 @@ const DEFAULT_EYEBROW = {
   explanation: 'How it works',
   'image-choice': 'Pick one',
   'app-name-choice': 'Pick a name',
+  'video-walkthrough': 'Walkthrough',
+  'screenshot-proof': 'Proof',
 };
+
+/** Small label/value facts (viewport, theme, commit…) shown under proof media. */
+export const facts = (list) =>
+  list?.length
+    ? `<dl class="uc-facts">${list.map((f) => `<div class="uc-fact"><dt>${esc(f.label)}</dt><dd>${inline(f.value)}</dd></div>`).join('')}</dl>`
+    : '';
 
 /** Paragraphs from text separated by blank lines; `code` spans allowed. */
 export const paragraphs = (text, className) =>

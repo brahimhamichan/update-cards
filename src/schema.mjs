@@ -1,8 +1,9 @@
 // Declarative card config schemas and a small strict validator (unknown keys are errors).
 
-import { safeUrl } from './html.mjs';
+import { DATA_IMAGE, hasScheme, safeUrl, safeWebUrl } from './html.mjs';
 
 const ID = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$/;
+const TIMESTAMP = /^(?:\d{1,2}:)?[0-5]?\d:[0-5]\d$/;
 
 const str = (max, opts = {}) => ({ kind: 'string', max, ...opts });
 const req = (rule) => ({ ...rule, required: true });
@@ -34,6 +35,10 @@ const INPUT = {
 };
 
 const linkFields = { href: str(2048, { url: true }), linkLabel: str(40) };
+// Proof media: images are local files or image data URIs (inlined at render); videos are local files or http(s) URLs.
+const image = () => str(4096, { media: 'image' });
+const webLinkFields = { href: str(2048, { web: true }), linkLabel: str(40) };
+const facts = arr(obj({ label: req(str(24)), value: req(str(80)) }), 1, 6);
 const cta = obj({ label: req(str(40)), href: req(str(2048, { url: true })) });
 const uniqueIds = (key, label = key) => (list, path, errors) => {
   const seen = new Set();
@@ -131,6 +136,21 @@ const SCHEMAS = {
     imageBackground: oneOf('light', 'dark', 'none'),
     options: req(arr(obj({ id: req(id()), src: req(str(4096)), alt: req(str(160)), caption: str(60) }), 2, 24)),
   },
+  'video-walkthrough': {
+    src: req(str(4096, { media: 'video' })),
+    mimeType: oneOf('video/mp4', 'video/webm', 'video/ogg'),
+    poster: image(),
+    aspect: oneOf('16:9', '4:3', '1:1'),
+    caption: str(240),
+    chapters: arr(obj({ time: req(str(8, { pattern: TIMESTAMP, patternHint: 'm:ss or h:mm:ss' })), label: req(str(80)) }), 1, 12),
+    ...webLinkFields,
+    facts,
+  },
+  'screenshot-proof': {
+    layout: oneOf('gallery', 'before-after'),
+    shots: req(arr(obj({ src: req(image()), alt: req(str(160)), label: str(24), caption: str(160), ...webLinkFields }), 1, 6)),
+    facts,
+  },
   'app-name-choice': {
     ...INPUT,
     options: req(arr(obj({ id: req(id()), name: req(str(40)), tagline: str(90), rationale: str(240), recommended: bool() }), 2, 12)),
@@ -160,6 +180,13 @@ const CHECKS = {
     });
   },
   'image-choice': (c, errors) => uniqueIds('id', 'option id')(c.options, 'options', errors),
+  'video-walkthrough': (c, errors) => {
+    const seconds = (c.chapters ?? []).map((ch) => ch.time.split(':').reduce((total, part) => total * 60 + Number(part), 0));
+    if (seconds.some((s, i) => i > 0 && s <= seconds[i - 1])) errors.push(err('chapters', 'times must increase'));
+  },
+  'screenshot-proof': (c, errors) => {
+    if (c.layout === 'before-after' && c.shots.length !== 2) errors.push(err('shots', 'the before-after layout needs exactly 2 shots'));
+  },
   'app-name-choice': (c, errors) => {
     uniqueIds('id', 'option id')(c.options, 'options', errors);
     if ((c.options ?? []).filter((o) => o.recommended).length > 1) errors.push(err('options', 'mark at most one option as recommended'));
@@ -182,6 +209,9 @@ function check(rule, value, path, errors) {
       if (value.length > rule.max) errors.push(err(path, `must be at most ${rule.max} characters`));
       if (rule.pattern && !rule.pattern.test(value)) errors.push(err(path, `must use ${rule.patternHint}`));
       if (rule.url && !safeUrl(value)) errors.push(err(path, 'must be an absolute http(s) or mailto URL'));
+      if (rule.web && !safeWebUrl(value)) errors.push(err(path, 'must be an absolute http(s) URL'));
+      if (rule.media === 'image' && hasScheme(value) && !DATA_IMAGE.test(value)) errors.push(err(path, 'must be a local image path or an image data: URI'));
+      if (rule.media === 'video' && hasScheme(value) && !safeWebUrl(value)) errors.push(err(path, 'must be a local video path or an absolute http(s) URL'));
       return;
     case 'boolean':
       if (typeof value !== 'boolean') errors.push(err(path, 'must be true or false'));

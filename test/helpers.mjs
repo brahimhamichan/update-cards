@@ -39,6 +39,25 @@ export const CARDS = {
     variant: 'comparison',
     columns: [{ title: 'X', recommended: true, points: ['p'] }, { title: 'Y', points: [{ text: 'q', kind: 'con' }] }],
   },
+  'video-walkthrough': {
+    type: 'video-walkthrough',
+    id: 'vw',
+    title: 'Walkthrough',
+    src: 'https://media.example.test/clips/demo.mp4',
+    caption: 'Sample clip',
+    chapters: [{ time: '0:00', label: 'Start' }, { time: '1:05', label: 'Save' }],
+    facts: [{ label: 'Viewport', value: '1144px' }],
+  },
+  'screenshot-proof': {
+    type: 'screenshot-proof',
+    id: 'sp',
+    title: 'Proof',
+    layout: 'before-after',
+    shots: [
+      { src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', alt: 'Before state' },
+      { src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', alt: 'After state', href: 'https://example.test/full.png' },
+    ],
+  },
   'app-name-choice': {
     type: 'app-name-choice',
     id: 'an',

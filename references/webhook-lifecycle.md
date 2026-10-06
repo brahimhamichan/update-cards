@@ -43,7 +43,7 @@ node scripts/render.mjs -c card.json -o /tmp/update-cards/card.html \
   --request-id req_abc123 --webhook-file /tmp/update-cards/req_abc123.local.json
 ```
 
-`--webhook-env [NAME]` (default `UPDATE_CARDS_WEBHOOK_URL`) works when the variable is already set in the environment. Delete the local file once the cards are rendered. The renderer restricts the document's `connect-src` CSP to the webhook origin; preview renders allow no network at all.
+`--webhook-env [NAME]` (default `UPDATE_CARDS_WEBHOOK_URL`) works when the variable is already set in the environment. Delete the local file once the cards are rendered. The renderer restricts the document's `connect-src` CSP to the webhook origin; preview renders allow no network at all (the only exception is a `video-walkthrough` http(s) video, whose exact origin is allowed in `media-src` and loads only on play).
 
 ## 3. What the card sends
 

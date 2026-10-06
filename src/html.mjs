@@ -25,6 +25,20 @@ export function safeUrl(value) {
   }
 }
 
+/** Returns a normalized absolute http(s) URL without credentials, or null. Used for media and proof links. */
+export function safeWebUrl(value) {
+  const href = safeUrl(value);
+  if (!href) return null;
+  const url = new URL(href);
+  return url.protocol !== 'mailto:' && !url.username && !url.password ? href : null;
+}
+
+/** True for `scheme:` values (URLs, data URIs); false for local paths, including Windows drive paths. */
+export const hasScheme = (value) => /^[a-z][a-z0-9+.-]*:/i.test(value) && !/^[a-z]:[\\/]/i.test(value);
+
+/** Image data URIs the renderer accepts as-is. */
+export const DATA_IMAGE = /^data:image\/(svg\+xml|png|jpeg|gif|webp|avif)(;[a-z0-9=-]+)*(;base64)?,/i;
+
 /** Serialize data for a <script type="application/json"> block without allowing tag breakout. */
 export const jsonForScript = (data) =>
   JSON.stringify(data).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
@@ -50,6 +64,7 @@ export const ICONS = {
   dot: svg('<circle cx="8" cy="8" r="2.5" fill="currentColor" stroke="none"/>'),
   progress: svg('<circle cx="8" cy="8" r="5"/><path d="M8 3a5 5 0 010 10z" fill="currentColor" stroke="none"/>'),
   alert: svg('<path d="M8 4.5v4.25M8 11.25v.25"/><circle cx="8" cy="8" r="6"/>'),
+  play: svg('<path d="M5.5 3.75v8.5L12.25 8z" fill="currentColor" stroke="none"/>', 20),
   image: svg('<rect x="2.5" y="3" width="11" height="10" rx="1.5"/><circle cx="6" cy="6.5" r="1.2"/><path d="M13.5 10.5l-3.5-3-6.5 5.5"/>', 20),
   star: svg('<path d="M8 2.75l1.6 3.3 3.65.5-2.65 2.55.65 3.6L8 11l-3.25 1.7.65-3.6L2.75 6.55l3.65-.5z" fill="currentColor" stroke="none"/>', 12),
   up: svg('<path d="M4 10l4-4 4 4"/>', 14),

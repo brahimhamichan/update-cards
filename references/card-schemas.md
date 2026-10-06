@@ -14,6 +14,8 @@ Source of truth: `src/schema.mjs`. Unknown keys are errors. Check a config with 
 | Share progress or status | `bullet-points` | no |
 | Highlight one number | `big-text` | no |
 | Explain a process, plan, or tradeoff | `explanation` | no |
+| Show a recorded walkthrough of a change | `video-walkthrough` | no |
+| Show screenshots of a change (gallery or before/after) | `screenshot-proof` | no |
 
 ## Common fields
 
@@ -99,5 +101,27 @@ No payload. Start from `examples/big-text.json`.
 
 A comparison `points` entry is a string or `{ text (≤160), kind: pro|con|neutral }`. Optional on any variant: `reveal` `{ label (required, ≤60), body (required, ≤1200) }`, an expandable section.
 No payload. Start from `examples/explanation-steps.json`, `examples/explanation.json` (flow), or `examples/explanation-comparison.json`.
+
+## video-walkthrough (read-only)
+
+| Field | Limits | Notes |
+|---|---|---|
+| `src` | required, ≤4096 | Absolute http(s) URL (preferred) or a local video path (`.mp4`, `.m4v`, `.webm`, `.ogv`; inlined only up to 350 kB). `data:`, `javascript:`, `mailto:`, `file:`, and credentialed URLs are errors |
+| `mimeType` | `video/mp4`, `video/webm`, `video/ogg` | Defaults from the file extension |
+| `poster` | ≤4096 | Local image path or image `data:` URI, inlined; missing → "Poster image unavailable" note + warning |
+| `aspect` | `16:9` (default), `4:3`, `1:1` | Player frame; the video is letterboxed inside it |
+| `caption` | ≤240 | Short description under the player; also the video's accessible description |
+| `chapters` | 1–12 | `{ time (m:ss or h:mm:ss, increasing), label (≤80) }`, shown as a list (not clickable) |
+| `href`, `linkLabel` | http(s), ≤40 | Fallback link (default label "Open video"). A remote `src` links to itself when `href` is omitted; an inlined local video has no link unless `href` is set |
+| `facts` | 1–6 | `{ label (≤24), value (≤80) }` chips, e.g. Viewport, Theme, Length, Commit |
+
+The player is native `<video controls preload="none" playsinline>`: no autoplay, mute, or loop, and nothing is fetched until play. CSP `media-src` lists exactly the video origins in the document (`data:` for inlined videos, `'none'` otherwise). A local file that is missing, unsupported, or too large renders a "Video unavailable" panel plus a warning.
+No payload. Start from `examples/video-walkthrough.json`.
+
+## screenshot-proof (read-only)
+
+`shots` (required, 1–6): `src` (required, local image path or image `data:` URI, inlined ≤350 kB), `alt` (required, ≤160), `label` (≤24, a corner pill), `caption` (≤160), `href` (http(s) link to the full-size original), `linkLabel` (≤40, default "Open original"). `layout`: `gallery` (default; responsive grid) or `before-after` (exactly 2 shots, side by side from ~560px, stacked when narrow; labels default to Before/After). `facts`: as above.
+Remote image URLs are errors (download the file first). A missing file renders a "Screenshot unavailable" placeholder plus a warning.
+No payload. Start from `examples/screenshot-proof.json`.
 
 See [webhook-lifecycle.md](webhook-lifecycle.md) for the payload envelope and callback handling.

@@ -8,7 +8,7 @@ import { CARDS, ENDPOINT, EXAMPLES, LIVE, TINY_SVG, count, dataBlock, imageChoic
 import { loadCard } from '../src/index.mjs';
 
 const INTERACTIVE = ['yes-no', 'form', 'checklist', 'app-name-choice'];
-const READONLY = ['bullet-points', 'big-text', 'explanation-steps', 'explanation-flow', 'explanation-comparison'];
+const READONLY = ['bullet-points', 'big-text', 'explanation-steps', 'explanation-flow', 'explanation-comparison', 'video-walkthrough', 'screenshot-proof'];
 const externalRef = (html) => html.match(/\b(?:src|href)\s*=\s*["']https?:[^"']*/gi) ?? [];
 
 test('every card type renders; examples render without warnings', () => {
@@ -47,11 +47,14 @@ test('hostile strings never appear raw and add no tags', () => {
       { ...CARDS['explanation-steps'], id: 'x2', steps: [{ title: h, detail: h, more: h }, { title: h }], reveal: { label: h, body: h } },
       { ...CARDS['explanation-comparison'], id: 'x3', columns: [{ title: h, summary: h, points: [h] }, { title: h, points: [{ text: h }] }] },
       imageChoice(['/nonexistent/x.svg', '/nonexistent/y.svg'], 'i2'),
+      { ...CARDS['video-walkthrough'], id: 'v2', caption: h, linkLabel: h.slice(0, 40), chapters: [{ time: '0:01', label: h }], facts: [{ label: h.slice(0, 24), value: h }] },
+      { ...CARDS['screenshot-proof'], id: 's2', shots: CARDS['screenshot-proof'].shots.map((s) => ({ ...s, alt: h, caption: h, label: h.slice(0, 24), linkLabel: h.slice(0, 40) })) },
     ];
     cards[8].options.forEach((o) => Object.assign(o, { alt: h, caption: h }));
     const { html } = renderCards(cards, LIVE);
     assert.ok(!html.includes(h), `raw hostile string in output: ${h}`);
-    assert.ok(!/<img[^>]*onerror/i.test(html) && !html.includes('<svg onload'));
+    const tags = html.replace(/"[^"]*"/g, '""'); // escaped text may sit inside quoted attribute values; check real attributes only
+    assert.ok(!/<img[^>]*onerror/i.test(tags) && !html.includes('<svg onload'));
     assert.equal(scriptTags(html), 2, 'only data block + runtime');
   }
 });
@@ -184,4 +187,84 @@ test('generated DOM ids stay unique even when card and field ids look alike', ()
   ]);
   const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(ids).size, ids.length, `duplicate ids: ${ids.filter((id, i) => ids.indexOf(id) !== i)}`);
+});
+
+test('video-walkthrough: native player, nothing autoplays or preloads, exact media-src origin', () => {
+  const dir = tempDir();
+  const { svg } = writeImages(dir);
+  const { html, warnings } = renderCard({ ...CARDS['video-walkthrough'], poster: svg }, {});
+  assert.deepEqual(warnings, []);
+  const video = html.match(/<video[^>]*>/)[0];
+  assert.match(video, /\scontrols\s/);
+  assert.match(video, /preload="none"/);
+  assert.match(video, /poster="data:image\/svg\+xml;base64,/);
+  assert.ok(!/autoplay|muted|loop/.test(video), video);
+  assert.match(html, /<source src="https:\/\/media\.example\.test\/clips\/demo\.mp4" type="video\/mp4">/);
+  assert.match(html, /media-src https:\/\/media\.example\.test;/);
+  assert.match(html, /<time class="uc-chapter-time">1:05<\/time>/);
+  assert.match(html, /<a class="uc-link" href="https:\/\/media\.example\.test\/clips\/demo\.mp4"[^>]*>Open video/);
+  assert.match(html, /<dt>Viewport<\/dt><dd>1144px<\/dd>/);
+  assert.equal(scriptTags(html), 0);
+  assert.ok(!html.includes(dir));
+  // Two videos on different origins → both origins, nothing broader.
+  const two = renderCards([CARDS['video-walkthrough'], { ...CARDS['video-walkthrough'], id: 'v2', src: 'https://cdn.other.test/a.webm', href: 'https://example.test/pr/1' }]).html;
+  assert.match(two, /media-src https:\/\/media\.example\.test https:\/\/cdn\.other\.test;/);
+  assert.match(two, /type="video\/webm"/);
+  assert.match(two, /href="https:\/\/example\.test\/pr\/1"/);
+});
+
+test('media-src defaults to none; small local videos inline as data:, large or missing ones show a fallback', () => {
+  assert.match(renderCard(CARDS['screenshot-proof']).html, /media-src &#39;none&#39;;/);
+  const dir = tempDir();
+  writeFileSync(join(dir, 'clip.mp4'), Buffer.alloc(2_000));
+  writeFileSync(join(dir, 'big.mp4'), Buffer.alloc(400_000));
+  const local = renderCard({ ...CARDS['video-walkthrough'], src: 'clip.mp4' }, { baseDir: dir });
+  assert.deepEqual(local.warnings, []);
+  assert.match(local.html, /<source src="data:video\/mp4;base64,/);
+  assert.match(local.html, /media-src data:;/);
+  assert.ok(!local.html.includes('Open video'), 'inlined video has no link unless href is given');
+  for (const src of ['big.mp4', 'gone.mp4', 'clip.mkv']) {
+    const r = renderCard({ ...CARDS['video-walkthrough'], src }, { baseDir: dir });
+    assert.equal(r.warnings.length, 1, src);
+    assert.ok(!r.html.includes('<video'), src);
+    assert.match(r.html, /class="uc-player" data-aspect="16:9" data-missing>/);
+    assert.match(r.html, /Video unavailable/);
+    assert.match(r.html, /media-src &#39;none&#39;;/);
+  }
+  const noPoster = renderCard({ ...CARDS['video-walkthrough'], poster: join(dir, 'gone.png') });
+  assert.match(noPoster.warnings[0], /vw\/poster: image file not found/);
+  assert.match(noPoster.html, /Poster image unavailable/);
+  assert.ok(!/<video[^>]*poster=/.test(noPoster.html));
+});
+
+test('screenshot-proof: inlined figures, before/after labels, original links, missing fallback', () => {
+  const dir = tempDir();
+  const { svg, png } = writeImages(dir);
+  const r = renderCard({ ...CARDS['screenshot-proof'], shots: [{ src: svg, alt: 'A' }, { src: png, alt: 'B', caption: 'After fix', href: 'https://example.test/full.png' }] });
+  assert.deepEqual(r.warnings, []);
+  assert.equal(count(r.html, '<figure class="uc-shot">'), 2);
+  assert.match(r.html, /data-layout="before-after"/);
+  assert.match(r.html, /uc-shot-label">Before<[\s\S]*uc-shot-label">After</);
+  assert.match(r.html, /<img src="data:image\/png;base64,[^"]+" alt="B"/);
+  assert.match(r.html, /href="https:\/\/example\.test\/full\.png"[^>]*>Open original/);
+  assert.ok(!r.html.includes(dir));
+  assert.throws(() => renderCard({ ...CARDS['screenshot-proof'], shots: [{ src: 'https://cdn.test/x.png', alt: 'R' }, { src: svg, alt: 'S' }] }), /local image path/);
+});
+
+test('proof cards resolve relative assets via loadCard and baseDir', () => {
+  const dir = tempDir();
+  writeImages(dir);
+  writeFileSync(join(dir, 'clip.webm'), Buffer.alloc(1_000));
+  const proof = { ...CARDS['screenshot-proof'], shots: [{ src: 'a.svg', alt: 'A' }, { src: 'b.png', alt: 'B' }] };
+  const video = { ...CARDS['video-walkthrough'], src: 'clip.webm', poster: 'a.svg' };
+  for (const [name, card] of [['proof.json', proof], ['video.json', video]]) writeFileSync(join(dir, name), JSON.stringify(card));
+  const loaded = renderCards([loadCard(join(dir, 'proof.json')), loadCard(join(dir, 'video.json'))], { baseDir: '/nonexistent' });
+  assert.deepEqual(loaded.warnings, []);
+  assert.match(loaded.html, /<source src="data:video\/webm;base64,/);
+  assert.ok(!loaded.html.includes(dir));
+  assert.deepEqual(renderCards([proof, video], { baseDir: dir }).warnings, []);
+  const missing = renderCard({ ...proof, layout: 'gallery', shots: [{ src: 'gone.png', alt: 'Gone' }] }, { baseDir: dir });
+  assert.match(missing.warnings[0], /sp\/shots\[0\]: image file not found/);
+  assert.match(missing.html, /uc-shot-media" data-missing>/);
+  assert.match(missing.html, /Screenshot unavailable/);
 });

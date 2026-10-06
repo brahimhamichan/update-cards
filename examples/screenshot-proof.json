@@ -1,0 +1,27 @@
+{
+  "type": "screenshot-proof",
+  "id": "settings-proof",
+  "index": 12,
+  "eyebrow": "Proof",
+  "title": "Settings form before and after the layout fix",
+  "body": "Illustrative sample artwork showing how a before/after proof card reads; these are not real screenshots.",
+  "tone": "success",
+  "layout": "before-after",
+  "shots": [
+    {
+      "src": "../assets/samples/proof-before.svg",
+      "alt": "Illustrative settings form with overlapping fields and a clipped save button",
+      "caption": "Fields overlap and the save button is clipped."
+    },
+    {
+      "src": "../assets/samples/proof-after.svg",
+      "alt": "Illustrative settings form with aligned fields, a full save button, and a success toast",
+      "caption": "Fields align, the button fits, and saving shows a toast."
+    }
+  ],
+  "facts": [
+    { "label": "Viewport", "value": "1280×720" },
+    { "label": "Theme", "value": "Light" },
+    { "label": "Artwork", "value": "Illustrative" }
+  ]
+}

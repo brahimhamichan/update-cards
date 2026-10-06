@@ -99,3 +99,29 @@ test('form field id "note" is reserved for the note box', () => {
   const card = { type: 'form', id: 'f', title: 'T', fields: [{ id: 'note', type: 'text', label: 'Note' }] };
   assert.deepEqual(paths(card), ['fields[0].id']);
 });
+
+test('proof media URLs: http(s) or local only, never javascript/data/mailto', () => {
+  const video = (patch) => with_(CARDS['video-walkthrough'], patch);
+  for (const src of ['javascript:alert(1)', 'data:video/mp4;base64,AAAA', 'mailto:a@b.test', 'file:///etc/passwd', 'ftp://x.test/a.mp4', 'https://u:p@x.test/a.mp4']) {
+    assert.ok(paths(video({ src })).includes('src'), src);
+  }
+  for (const src of ['https://x.test/a.mp4', 'http://x.test/a.webm', 'clips/a.mp4', '/abs/a.mp4']) assert.deepEqual(paths(video({ src })), [], src);
+  for (const poster of ['https://x.test/p.png', 'javascript:1', 'data:text/html,hi']) assert.ok(paths(video({ poster })).includes('poster'), poster);
+  for (const href of ['mailto:a@b.test', 'javascript:1', '/rel']) assert.ok(paths(video({ href })).includes('href'), href);
+  const shot = (patch) => with_(CARDS['screenshot-proof'], { shots: [{ src: 'a.png', alt: 'A', ...patch }, { src: 'b.png', alt: 'B' }] });
+  for (const src of ['https://x.test/a.png', 'javascript:1', 'data:text/html,hi', 'mailto:a@b.test']) assert.ok(paths(shot({ src })).includes('shots[0].src'), src);
+  assert.deepEqual(paths(shot({ src: 'data:image/svg+xml;base64,PHN2Zy8+' })), []);
+  assert.ok(paths(shot({ href: 'mailto:a@b.test' })).includes('shots[0].href'));
+});
+
+test('proof card structure: chapters ordered and well-formed, before-after needs two shots', () => {
+  const video = (chapters) => with_(CARDS['video-walkthrough'], { chapters });
+  assert.ok(paths(video([{ time: '0:10', label: 'B' }, { time: '0:05', label: 'A' }])).includes('chapters'));
+  for (const time of ['1:60', '90', 'a:bc', '0:5']) assert.ok(paths(video([{ time, label: 'X' }])).includes('chapters[0].time'), time);
+  assert.deepEqual(paths(video([{ time: '0:00', label: 'A' }, { time: '1:02:03', label: 'B' }])), []);
+  const shots = CARDS['screenshot-proof'].shots;
+  assert.ok(paths(with_(CARDS['screenshot-proof'], { shots: shots.slice(0, 1) })).includes('shots'));
+  assert.deepEqual(paths(with_(CARDS['screenshot-proof'], { layout: 'gallery', shots: shots.slice(0, 1) })), []);
+  assert.ok(paths(with_(CARDS['screenshot-proof'], { layout: 'gallery', shots: Array(7).fill(shots[0]) })).includes('shots'));
+  assert.ok(paths(with_(CARDS['screenshot-proof'], { submitLabel: 'Send' })).includes('submitLabel'), 'proof cards take no input fields');
+});

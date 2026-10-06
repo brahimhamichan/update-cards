@@ -281,4 +281,19 @@ describe('runtime in headless Chromium', { skip: CHROME ? false : 'no headless c
     assert.equal(r.missing, 2);
     assert.ok(!JSON.stringify(r.consoleCalls).includes('hooks.example.test'), 'endpoint leaked to console');
   });
+  test('proof cards: screenshots decode, missing ones show a fallback, the video waits for the user', () => {
+    const shots = [CARDS['screenshot-proof'].shots[0], { src: '/nonexistent/gone.png', alt: 'Gone' }];
+    const r = runPage([CARDS['video-walkthrough'], { ...CARDS['screenshot-proof'], layout: 'gallery', shots }], {}, `
+      await sleep(100);
+      const v = $('video');
+      results.video = { paused: v.paused, autoplay: v.autoplay, preload: v.preload, controls: v.controls, readyState: v.readyState };
+      results.decoded = $$('.uc-shot img').map((img) => img.complete && img.naturalWidth > 0);
+      results.fallback = getComputedStyle($('.uc-shot-media[data-missing] .uc-missing')).display;
+      results.scripts = $$('script').length;
+    `);
+    assert.deepEqual(r.video, { paused: true, autoplay: false, preload: 'none', controls: true, readyState: 0 });
+    assert.deepEqual(r.decoded, [true]);
+    assert.equal(r.fallback, 'flex');
+    assert.equal(r.scripts, 1, 'only the test harness script; proof cards add none');
+  });
 });

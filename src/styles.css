@@ -537,6 +537,71 @@ input:is([type="checkbox"], [type="radio"]):disabled { cursor: default; opacity:
   font-size: 12.5px; color: var(--uc-muted); line-height: 1.45;
 }
 
+/* ── Proof media (video walkthrough + screenshots) ─────── */
+.uc-video, .uc-shot { display: grid; gap: 8px; min-width: 0; }
+.uc-shot { align-content: start; }
+.uc-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0d0d0c;
+  border: 1px solid var(--uc-hair);
+}
+.uc-player[data-aspect="4:3"] { aspect-ratio: 4 / 3; }
+.uc-player[data-aspect="1:1"] { aspect-ratio: 1; max-width: 520px; }
+.uc-player video { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
+.uc-player:focus-within { outline: 2px solid var(--uc-ring); outline-offset: 2px; }
+.uc-caption {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px;
+  font-size: 12.5px; line-height: 1.45; color: var(--uc-muted); text-wrap: pretty;
+}
+.uc-caption > span { flex: 1 1 200px; }
+.uc-asset-note { font-size: 12px; color: var(--uc-faint); }
+.uc-player[data-missing] .uc-missing, .uc-shot-media[data-missing] .uc-missing { display: flex; }
+
+.uc-chapters {
+  margin-top: 12px;
+  display: grid; gap: 2px 18px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  font-size: 13px;
+}
+.uc-chapter { display: flex; align-items: baseline; gap: 10px; padding: 5px 0; border-top: 1px solid var(--uc-hair); min-width: 0; }
+.uc-chapter-time { flex: none; min-width: 38px; font: 500 12px/1.4 var(--uc-mono); color: var(--uc-primary-ink); font-variant-numeric: tabular-nums; }
+
+.uc-shots { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.uc-shots[data-count="1"] { grid-template-columns: 1fr; }
+.uc-shots[data-layout="before-after"] { grid-template-columns: 1fr; }
+@container card (min-width: 560px) { .uc-shots[data-layout="before-after"] { grid-template-columns: 1fr 1fr; } }
+.uc-shot-media {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--uc-border);
+  background: var(--uc-subtle);
+}
+.uc-shot-media img { display: block; width: 100%; height: auto; }
+.uc-shot-media[data-missing] { aspect-ratio: 16 / 9; }
+.uc-shot-label {
+  position: absolute; top: 8px; left: 8px;
+  padding: 4px 8px; border-radius: 999px;
+  font: 600 10.5px/1 var(--uc-font); letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--uc-card-fg);
+  background: color-mix(in oklab, var(--uc-card) 88%, transparent);
+  border: 1px solid var(--uc-hair);
+  backdrop-filter: blur(4px);
+}
+
+.uc-facts { margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.uc-fact {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 4px 9px; border-radius: 8px;
+  background: var(--uc-subtle); border: 1px solid var(--uc-hair);
+  font-size: 12px; min-width: 0;
+}
+.uc-fact dt { font: 500 10.5px/1.4 var(--uc-mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--uc-muted); }
+.uc-fact dd { margin: 0; font-weight: 560; color: var(--uc-card-fg); }
+
 /* ── Narrow cards (≈320px viewports) ───────────────────── */
 @container card (max-width: 420px) {
   .uc-title { font-size: 16px; }
