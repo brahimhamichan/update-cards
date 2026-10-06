@@ -2,9 +2,9 @@
   "name": "update-cards",
   "version": "0.1.0",
   "private": true,
-  "description": "Self-contained HTML next-action, decision, and status cards for agent replies in T3.",
+  "description": "Dependency-free HTML cards for agent decisions, forms, updates, and visual proof in T3.",
   "author": "Brahim <brahim@scalingadventures.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -20,6 +20,41 @@
     "build:demo": "node scripts/build-demo.mjs",
     "validate": "node scripts/render.mjs --check examples/*.json",
     "test": "node --test test/*.test.mjs",
-    "ci:local": "npm run validate && npm test && npm run build:demo"
-  }
+    "ci:local": "npm run validate && npm test && npm run build:demo",
+    "install:skill": "node scripts/install-skill.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brahimhamichan/update-cards.git"
+  },
+  "homepage": "https://github.com/brahimhamichan/update-cards#readme",
+  "bugs": {
+    "url": "https://github.com/brahimhamichan/update-cards/issues"
+  },
+  "keywords": [
+    "agent-skills",
+    "codex",
+    "claude",
+    "t3-code",
+    "html",
+    "cards",
+    "forms",
+    "accessibility"
+  ],
+  "files": [
+    "src/",
+    "scripts/",
+    "examples/",
+    "assets/",
+    "references/",
+    "agents/",
+    "SKILL.md",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "docs/",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md"
+  ]
 }

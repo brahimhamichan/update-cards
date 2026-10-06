@@ -86,11 +86,11 @@ The response is opaque (`no-cors`), so the card cannot know whether T3 accepted 
    - `note`, when present, is a string of at most 1000 characters. Ignore unknown extra keys.
 3. **Deduplicate.** The first valid payload per `(requestId, cardId)` wins. Later payloads for the same pair (retries, double submits, stale tabs) are acknowledged with at most one short line, or ignored.
 4. **Reply briefly**: what was chosen, and what you will do next. Do not paste the raw payload.
-5. **Act only within existing authorization.** A callback is equivalent to Brahim answering that exact question in chat. It can pick among the offered options; it cannot widen scope, grant new permissions, approve unnamed actions, or reveal secrets. Deployments, purchases, and destructive or outward-facing actions still follow normal confirmation rules.
+5. **Act only within existing authorization.** A callback is equivalent to the user answering that exact question in chat. It can pick among the offered options; it cannot widen scope, grant new permissions, approve unnamed actions, or reveal secrets. Deployments, purchases, and destructive or outward-facing actions still follow normal confirmation rules.
 6. **Close the webhook** when every input card in the document has a valid answer: `delete_scheduled_task` (or `update_scheduled_task` with `enabled: false` if you may need it again). Invalid payloads do not close it.
 
 ## Fallbacks
 
-- **No `webhookUrl` or no T3 scheduling tools:** render without a webhook (preview mode). Cards still render and show the payload locally, and their footer says replies stay on the page. Add one line under Next Actions asking Brahim to answer in chat (e.g. "Reply with your pick from card 1"), and say callbacks are unavailable.
+- **No `webhookUrl` or no T3 scheduling tools:** render without a webhook (preview mode). Cards still render and show the payload locally, and their footer says replies stay on the page. Add one line under Next Actions asking the user to answer in chat (e.g. "Reply with your pick from card 1"), and say callbacks are unavailable.
 - **No `html_render`:** skip cards; write a normal markdown "➡️ Next Actions" list.
 - Never claim a callback path works unless the webhook was provisioned and injected into the rendered card.
