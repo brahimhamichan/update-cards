@@ -1,24 +1,27 @@
 import { esc, ICONS, inline, join, link } from '../html.mjs';
-import { facts, shell } from './shared.mjs';
+import { facts, shell, viewButton } from './shared.mjs';
 
 const PAIR = ['Before', 'After'];
 
-/** 1–6 captioned screenshots as a gallery or a before/after pair. Images arrive pre-resolved as data URIs. Read-only. */
+/** 1–6 captioned screenshots as a gallery or a before/after pair; each opens the card's lightbox. Read-only. */
 export function render(card, ctx) {
   const layout = card.layout ?? 'gallery';
   const shots = card.shots.map((s, i) => {
     const image = ctx.images.get(s.src);
     const label = s.label ?? (layout === 'before-after' ? PAIR[i] : '');
-    return join(
-      '<figure class="uc-shot">',
-      `<div class="uc-shot-media"${image?.dataUri ? '' : ' data-missing'}>`,
-      image?.dataUri && `<img src="${esc(image.dataUri)}" alt="${esc(s.alt)}" decoding="async">`,
+    const media = join(
+      `<span class="uc-shot-media" data-uc-media${image?.dataUri ? '' : ' data-missing'}>`,
+      image?.dataUri && `<img data-uc-img src="${esc(image.dataUri)}" alt="${esc(s.alt)}" decoding="async">`,
       `<span class="uc-missing">${ICONS.image}<span>Screenshot unavailable</span><span class="uc-sr">: ${esc(s.alt)}</span></span>`,
-      label && `<span class="uc-shot-label">${esc(label)}</span>`,
-      '</div>',
+      label && `<span class="uc-shot-label" data-uc-shot-label>${esc(label)}</span>`,
+      '</span>',
+    );
+    return join(
+      '<figure class="uc-shot" data-uc-item>',
+      image?.dataUri ? viewButton(s.alt, media) : media,
       (s.caption || s.href) && join(
         '<figcaption class="uc-caption">',
-        s.caption && `<span>${inline(s.caption)}</span>`,
+        s.caption && `<span data-uc-caption>${inline(s.caption)}</span>`,
         link(s.href, s.linkLabel ?? 'Open original'),
         '</figcaption>',
       ),

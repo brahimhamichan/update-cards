@@ -5,6 +5,7 @@ import { dirname, extname, isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DATA_IMAGE, esc, hasScheme, jsonForScript, safeWebUrl } from './html.mjs';
 import { assertValidCard, CARD_TYPES, INPUT_TYPES, validateCard } from './schema.mjs';
+import { LIGHTBOX } from './templates/shared.mjs';
 import * as appNameChoice from './templates/app-name-choice.mjs';
 import * as bigText from './templates/big-text.mjs';
 import * as bulletPoints from './templates/bullet-points.mjs';
@@ -55,6 +56,8 @@ function assets() {
       .replace(/\s*([{};,>])\s*/g, '$1')
       .trim(),
     js: `(() => {\n'use strict';\n${strip('client/core.mjs')}\n${strip('client/dom.mjs')}\n})();`,
+    // Separate from the response runtime: read-only proof cards get media interaction only, never the callback code.
+    mediaJs: `(() => {\n'use strict';\n${strip('client/media.mjs')}\n})();`,
   };
   return cachedAssets;
 }
@@ -154,7 +157,8 @@ function resolveVideos(cards, baseDir, warnings) {
 
 /**
  * Render one or more cards into a standalone HTML document (inline CSS/JS/images; the only network asset a document
- * can load is a `video-walkthrough` video hosted over http(s)).
+ * can load is a `video-walkthrough` video hosted over http(s)). Input cards get the response runtime (plus its data
+ * block); cards with previewable images or a playable video get the separate media runtime (lightbox, full screen).
  *
  * @param {object | object[]} input card config or list of configs, rendered as one stack
  * @param {object} [options]
@@ -183,10 +187,13 @@ export function renderCards(input, options = {}) {
   const ctx = { live: Boolean(endpoint), images: resolveImages(cards, baseDir, warnings), videos };
   const body = cards.map((card) => TEMPLATES[card.type].render(card, ctx)).join('\n');
   const needsScript = cards.some((c) => INPUT_TYPES.includes(c.type));
-  const { css, js } = assets();
+  // Markup markers contain `<`/`"`, which escaped config text can never produce.
+  const hasGallery = body.includes('<button type="button" class="uc-view" data-uc-zoom');
+  const needsMedia = hasGallery || body.includes('" data-uc-fullscreen>');
+  const { css, js, mediaJs } = assets();
   // Defense in depth: no external fetches except the configured webhook origin and exact walkthrough video origins,
   // no form posts, no <base> hijack.
-  const csp = `connect-src ${endpoint ? new URL(endpoint).origin : "'none'"}; img-src data:; media-src ${mediaSrc.join(' ') || "'none'"}; form-action 'none'; base-uri 'none'; object-src 'none'`;
+  const csp = `connect-src ${endpoint && needsScript ? new URL(endpoint).origin : "'none'"}; img-src data:; media-src ${mediaSrc.join(' ') || "'none'"}; form-action 'none'; base-uri 'none'; object-src 'none'`;
   const title = options.title ?? cards[0].title;
 
   const html = [
@@ -202,8 +209,10 @@ export function renderCards(input, options = {}) {
     '</head>',
     '<body>',
     `<main class="uc-stack">\n${body}\n</main>`,
+    hasGallery && LIGHTBOX,
     needsScript && `<script type="application/json" id="uc-data">${jsonForScript({ v: 1, endpoint, requestId })}</script>`,
     needsScript && `<script>\n${js}\n</script>`,
+    needsMedia && `<script>\n${mediaJs}\n</script>`,
     '</body>',
     '</html>',
     '',

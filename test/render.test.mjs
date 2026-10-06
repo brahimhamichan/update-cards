@@ -8,7 +8,9 @@ import { CARDS, ENDPOINT, EXAMPLES, LIVE, TINY_SVG, count, dataBlock, imageChoic
 import { loadCard } from '../src/index.mjs';
 
 const INTERACTIVE = ['yes-no', 'form', 'checklist', 'app-name-choice'];
-const READONLY = ['bullet-points', 'big-text', 'explanation-steps', 'explanation-flow', 'explanation-comparison', 'video-walkthrough', 'screenshot-proof'];
+const READONLY = ['bullet-points', 'big-text', 'explanation-steps', 'explanation-flow', 'explanation-comparison'];
+const PROOF = ['video-walkthrough', 'screenshot-proof'];
+const scripts = (html) => [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
 const externalRef = (html) => html.match(/\b(?:src|href)\s*=\s*["']https?:[^"']*/gi) ?? [];
 
 test('every card type renders; examples render without warnings', () => {
@@ -27,6 +29,40 @@ test('script count: read-only none, input cards exactly one data block + one run
   for (const name of INTERACTIVE) assert.equal(scriptTags(renderCard(CARDS[name]).html), 2, name);
   const r = renderCard(CARDS['bullet-points']);
   assert.equal(r.cards[0].interactive, false);
+});
+
+test('proof cards get only the media runtime: no data block, no endpoint, no network code', () => {
+  for (const name of PROOF) {
+    const { html } = renderCard(CARDS[name], LIVE);
+    const [media] = scripts(html);
+    assert.equal(scriptTags(html), 1, name);
+    assert.ok(!html.includes('id="uc-data"') && !html.includes(ENDPOINT), name);
+    assert.ok(!/\bfetch\(|XMLHttpRequest|sendBeacon|WebSocket|buildPayload|uc-data/.test(media), `${name}: media runtime must not touch the network or callbacks`);
+    assert.match(html, /connect-src &#39;none&#39;/, 'no webhook origin for read-only cards');
+  }
+  // image-choice: data block + response runtime + media runtime, each once; the lightbox is one shared dialog.
+  const dir = tempDir();
+  const { svg, png } = writeImages(dir);
+  const { html } = renderCards([imageChoice([svg, png]), CARDS['screenshot-proof'], CARDS['video-walkthrough']], LIVE);
+  assert.equal(scriptTags(html), 3);
+  assert.equal(count(html, 'id="uc-data"'), 1);
+  assert.equal(count(html, '<dialog class="uc-lightbox"'), 1);
+  assert.ok(scripts(html)[2].includes('data-uc-lightbox') && !scripts(html)[2].includes('sendPayload'));
+});
+
+test('image-choice: previews are buttons outside the pick labels; missing images are not buttons', () => {
+  const dir = tempDir();
+  const { svg, png } = writeImages(dir);
+  const { html } = renderCard({ ...imageChoice([svg, png, '/nonexistent/gone.svg']), options: [
+    { id: 'a', src: svg, alt: 'Alpha logo', caption: 'Alpha' },
+    { id: 'b', src: png, alt: 'Beta logo' },
+    { id: 'c', src: '/nonexistent/gone.svg', alt: 'Gone logo', caption: 'Gone' },
+  ] });
+  for (const label of html.match(/<label class="uc-tile-pick"[\s\S]*?<\/label>/g)) assert.ok(!/<button|<img/.test(label), label);
+  assert.equal(count(html, 'class="uc-tile-pick"'), 3, 'every option keeps an explicit pick label');
+  assert.equal(count(html, 'class="uc-view" data-uc-zoom'), 2);
+  assert.match(html, /aria-label="View larger: Alpha logo"/);
+  assert.match(html, /<label class="uc-tile-pick" for="ic~opt~1"><input type="radio"[^>]*><span class="uc-radio" aria-hidden="true"><\/span><span class="uc-tile-caption" data-uc-caption><span aria-hidden="true">Select<\/span><span class="uc-sr">Beta logo<\/span>/);
 });
 
 test('hostile strings never appear raw and add no tags', () => {
@@ -55,7 +91,7 @@ test('hostile strings never appear raw and add no tags', () => {
     assert.ok(!html.includes(h), `raw hostile string in output: ${h}`);
     const tags = html.replace(/"[^"]*"/g, '""'); // escaped text may sit inside quoted attribute values; check real attributes only
     assert.ok(!/<img[^>]*onerror/i.test(tags) && !html.includes('<svg onload'));
-    assert.equal(scriptTags(html), 2, 'only data block + runtime');
+    assert.equal(scriptTags(html), 3, 'only data block + response runtime + media runtime');
   }
 });
 
@@ -121,7 +157,8 @@ test('missing, remote, oversized and unsupported images warn with a visible plac
   assert.match(r.warnings.join('\n'), /larger/);
   assert.equal(count(r.html, 'data-uc-media data-missing'), 5);
   assert.ok(!r.html.includes('cdn.test') && !r.html.includes('text/html,hi') && !r.html.includes(dir));
-  assert.equal(count(r.html, '<img '), 1);
+  assert.equal(count(r.html, '<img data-uc-img'), 1);
+  assert.equal(count(r.html, 'class="uc-view" data-uc-zoom'), 1, 'only the image that exists is a preview button');
 });
 
 test('preview mode: no endpoint, connect-src none', () => {
@@ -204,7 +241,11 @@ test('video-walkthrough: native player, nothing autoplays or preloads, exact med
   assert.match(html, /<time class="uc-chapter-time">1:05<\/time>/);
   assert.match(html, /<a class="uc-link" href="https:\/\/media\.example\.test\/clips\/demo\.mp4"[^>]*>Open video/);
   assert.match(html, /<dt>Viewport<\/dt><dd>1144px<\/dd>/);
-  assert.equal(scriptTags(html), 0);
+  assert.equal(scriptTags(html), 1, 'media runtime only');
+  assert.equal(count(html, '<video controls'), 1);
+  assert.match(html, /<div class="uc-theater" data-uc-theater popover="manual"><div class="uc-player"[^>]*><video/);
+  assert.match(html, /<button type="button" class="uc-btn uc-btn-secondary uc-btn-sm" data-uc-fullscreen>/);
+  assert.match(html, /data-uc-theater-close>/);
   assert.ok(!html.includes(dir));
   // Two videos on different origins → both origins, nothing broader.
   const two = renderCards([CARDS['video-walkthrough'], { ...CARDS['video-walkthrough'], id: 'v2', src: 'https://cdn.other.test/a.webm', href: 'https://example.test/pr/1' }]).html;
@@ -226,7 +267,8 @@ test('media-src defaults to none; small local videos inline as data:, large or m
   for (const src of ['big.mp4', 'gone.mp4', 'clip.mkv']) {
     const r = renderCard({ ...CARDS['video-walkthrough'], src }, { baseDir: dir });
     assert.equal(r.warnings.length, 1, src);
-    assert.ok(!r.html.includes('<video'), src);
+    assert.ok(!r.html.includes('<video') && !r.html.includes('data-uc-fullscreen'), src);
+    assert.equal(scriptTags(r.html), 0, 'nothing to play, no media runtime');
     assert.match(r.html, /class="uc-player" data-aspect="16:9" data-missing>/);
     assert.match(r.html, /Video unavailable/);
     assert.match(r.html, /media-src &#39;none&#39;;/);
@@ -242,10 +284,11 @@ test('screenshot-proof: inlined figures, before/after labels, original links, mi
   const { svg, png } = writeImages(dir);
   const r = renderCard({ ...CARDS['screenshot-proof'], shots: [{ src: svg, alt: 'A' }, { src: png, alt: 'B', caption: 'After fix', href: 'https://example.test/full.png' }] });
   assert.deepEqual(r.warnings, []);
-  assert.equal(count(r.html, '<figure class="uc-shot">'), 2);
+  assert.equal(count(r.html, '<figure class="uc-shot" data-uc-item>'), 2);
   assert.match(r.html, /data-layout="before-after"/);
-  assert.match(r.html, /uc-shot-label">Before<[\s\S]*uc-shot-label">After</);
-  assert.match(r.html, /<img src="data:image\/png;base64,[^"]+" alt="B"/);
+  assert.match(r.html, /uc-shot-label" data-uc-shot-label>Before<[\s\S]*uc-shot-label" data-uc-shot-label>After</);
+  assert.match(r.html, /<button type="button" class="uc-view" data-uc-zoom aria-haspopup="dialog" aria-label="View larger: B"><span class="uc-shot-media" data-uc-media><img data-uc-img src="data:image\/png;base64,[^"]+" alt="B"/);
+  assert.equal(count(r.html, '<dialog class="uc-lightbox"'), 1);
   assert.match(r.html, /href="https:\/\/example\.test\/full\.png"[^>]*>Open original/);
   assert.ok(!r.html.includes(dir));
   assert.throws(() => renderCard({ ...CARDS['screenshot-proof'], shots: [{ src: 'https://cdn.test/x.png', alt: 'R' }, { src: svg, alt: 'S' }] }), /local image path/);
@@ -265,6 +308,8 @@ test('proof cards resolve relative assets via loadCard and baseDir', () => {
   assert.deepEqual(renderCards([proof, video], { baseDir: dir }).warnings, []);
   const missing = renderCard({ ...proof, layout: 'gallery', shots: [{ src: 'gone.png', alt: 'Gone' }] }, { baseDir: dir });
   assert.match(missing.warnings[0], /sp\/shots\[0\]: image file not found/);
-  assert.match(missing.html, /uc-shot-media" data-missing>/);
+  assert.match(missing.html, /<span class="uc-shot-media" data-uc-media data-missing>/);
+  assert.ok(!missing.html.includes('class="uc-view"') && !missing.html.includes('<dialog'), 'missing shots are not buttons');
+  assert.equal(scriptTags(missing.html), 0);
   assert.match(missing.html, /Screenshot unavailable/);
 });

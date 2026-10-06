@@ -72,6 +72,7 @@ Values: `{ checked: [ids], unchecked: [ids], note? }`. Start from `examples/chec
 
 `options` (required, 2–24, unique `id`): `id`, `src` (≤4096), `alt` (≤160) required; `caption` (≤60). `aspect`: `1:1`, `4:3`, `16:9`. `imageBackground`: `light`, `dark`, `none`.
 `src` is a local file path (relative to the config file via `loadCard`, or absolute) or an image `data:` URI; files are inlined at render (≤350 kB each). Remote URLs are not fetched: they render the visible "Image unavailable" state with a warning, as do missing files. `imageBackground` `light`/`dark` pads images on a neutral well (good for logos); `none` fills the frame (photos). Bundled demo logos live in `assets/logos/`.
+Clicking an image only opens the preview viewer (never selects); choose via the radio row under it. Preview stays usable after answering; see README "Image and video full screen".
 Values: `{ choice: id, note? }`. Start from `examples/image-choice.json`.
 
 ## app-name-choice
@@ -116,12 +117,14 @@ No payload. Start from `examples/explanation-steps.json`, `examples/explanation.
 | `facts` | 1–6 | `{ label (≤24), value (≤80) }` chips, e.g. Viewport, Theme, Length, Commit |
 
 The player is native `<video controls preload="none" playsinline>`: no autoplay, mute, or loop, and nothing is fetched until play. CSP `media-src` lists exactly the video origins in the document (`data:` for inlined videos, `'none'` otherwise). A local file that is missing, unsupported, or too large renders a "Video unavailable" panel plus a warning.
+A "Full screen" button requests native full screen; if the host frame blocks it, the same player fills the card frame with a note, "Open video" link, Close, and Escape. No new config fields.
 No payload. Start from `examples/video-walkthrough.json`.
 
 ## screenshot-proof (read-only)
 
 `shots` (required, 1–6): `src` (required, local image path or image `data:` URI, inlined ≤350 kB), `alt` (required, ≤160), `label` (≤24, a corner pill), `caption` (≤160), `href` (http(s) link to the full-size original), `linkLabel` (≤40, default "Open original"). `layout`: `gallery` (default; responsive grid) or `before-after` (exactly 2 shots, side by side from ~560px, stacked when narrow; labels default to Before/After). `facts`: as above.
 Remote image URLs are errors (download the file first). A missing file renders a "Screenshot unavailable" placeholder plus a warning.
+Each present image is a "View larger" button opening a lightbox (prev/next, zoom, full screen where the host permits, `href` as "Open original"); missing images are placeholders. No new config fields.
 No payload. Start from `examples/screenshot-proof.json`.
 
 See [webhook-lifecycle.md](webhook-lifecycle.md) for the payload envelope and callback handling.

@@ -44,7 +44,9 @@ function setState(card, state, message) {
   const status = card.querySelector('[data-uc-status]');
   if (status) status.textContent = message || '';
   const locked = state === 'sending' || state === 'sent' || state === 'demo';
-  for (const el of card.querySelector('form')?.elements ?? []) if (!el.hasAttribute('data-uc-reset')) el.disabled = locked;
+  // Reset and image-preview buttons stay usable after a reply. Fieldsets are skipped: disabling one would disable the
+  // preview buttons inside it, and their inputs are listed (and disabled) individually anyway.
+  for (const el of card.querySelector('form')?.elements ?? []) if (!el.matches('[data-uc-reset], [data-uc-zoom], fieldset')) el.disabled = locked;
   card.querySelector('[data-uc-reset]')?.toggleAttribute('hidden', state !== 'demo');
 }
 
@@ -144,10 +146,4 @@ function updateProgress(card) {
   card.dataset.ucComplete = String(done === boxes.length);
 }
 
-function markMissing(img) {
-  img.closest('[data-uc-media]')?.setAttribute('data-missing', '');
-}
-
-// decode() rejects for broken or undecodable images, including ones that failed before this script ran.
-document.querySelectorAll('img[data-uc-img]').forEach((img) => img.decode().catch(() => img.naturalWidth > 0 || markMissing(img)));
 document.querySelectorAll('[data-uc-card]').forEach(wireCard);

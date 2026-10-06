@@ -68,5 +68,10 @@ export const ICONS = {
   image: svg('<rect x="2.5" y="3" width="11" height="10" rx="1.5"/><circle cx="6" cy="6.5" r="1.2"/><path d="M13.5 10.5l-3.5-3-6.5 5.5"/>', 20),
   star: svg('<path d="M8 2.75l1.6 3.3 3.65.5-2.65 2.55.65 3.6L8 11l-3.25 1.7.65-3.6L2.75 6.55l3.65-.5z" fill="currentColor" stroke="none"/>', 12),
   up: svg('<path d="M4 10l4-4 4 4"/>', 14),
+  expand: svg('<path d="M9.5 2.75h3.75V6.5M6.5 13.25H2.75V9.5M13.25 2.75L9 7M2.75 13.25L7 9"/>', 14),
+  fullscreen: svg('<path d="M2.75 6V2.75H6M10 2.75h3.25V6M13.25 10v3.25H10M6 13.25H2.75V10"/>', 14),
+  zoom: svg('<circle cx="7" cy="7" r="4.25"/><path d="M10.25 10.25l3.25 3.25M5 7h4M7 5v4"/>', 14),
+  prev: svg('<path d="M10 3.5L5.5 8l4.5 4.5"/>', 20),
+  next: svg('<path d="M6 3.5L10.5 8 6 12.5"/>', 20),
   down: svg('<path d="M4 6l4 4 4-4"/>', 14),
 };

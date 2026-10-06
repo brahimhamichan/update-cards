@@ -1,4 +1,4 @@
-import { esc, inline, join } from '../html.mjs';
+import { esc, ICONS, inline, join } from '../html.mjs';
 
 const DEFAULT_EYEBROW = {
   'yes-no': 'Decision',
@@ -84,3 +84,28 @@ export function footer(ctx, buttons) {
 
 export const submitButton = (label) =>
   `<button type="button" class="uc-btn uc-btn-primary" data-uc-action="submit" data-uc-primary>${esc(label)}</button>`;
+
+/** Wrap a present image in a preview button that opens the card's lightbox (see client/media.mjs). Missing images stay plain. */
+export const viewButton = (alt, media) =>
+  `<button type="button" class="uc-view" data-uc-zoom aria-haspopup="dialog" aria-label="View larger: ${esc(alt)}">${media}<span class="uc-view-hint" aria-hidden="true">${ICONS.expand}</span></button>`;
+
+/** The one image viewer per document; client/media.mjs fills it from the clicked card's preview buttons. */
+export const LIGHTBOX = join(
+  '<dialog class="uc-lightbox" data-uc-lightbox aria-labelledby="uc-lb-title">',
+  '<div class="uc-lb-frame" data-uc-lb-frame>',
+  '<div class="uc-lb-bar">',
+  '<p class="uc-lb-title" id="uc-lb-title"><span data-uc-lb-title></span><span class="uc-lb-count" data-uc-lb-count></span></p>',
+  '<div class="uc-lb-tools">',
+  `<button type="button" class="uc-lb-btn" data-uc-lb="zoom" aria-pressed="false">${ICONS.zoom}<span>Zoom</span></button>`,
+  `<button type="button" class="uc-lb-btn" data-uc-lb="fullscreen" aria-pressed="false">${ICONS.fullscreen}<span>Full screen</span></button>`,
+  `<button type="button" class="uc-lb-btn" data-uc-lb="close" aria-label="Close viewer">${ICONS.x}</button>`,
+  '</div></div>',
+  '<div class="uc-lb-stage" data-uc-lb-stage data-zoom="fit"><img data-uc-lb-img alt=""></div>',
+  `<button type="button" class="uc-lb-nav" data-uc-lb="prev" aria-label="Previous image">${ICONS.prev}</button>`,
+  `<button type="button" class="uc-lb-nav" data-uc-lb="next" aria-label="Next image">${ICONS.next}</button>`,
+  '<div class="uc-lb-foot">',
+  '<p class="uc-lb-caption" data-uc-lb-caption aria-live="polite"></p>',
+  '<p class="uc-lb-note" data-uc-lb-note role="status"></p>',
+  `<a class="uc-link" data-uc-lb-original target="_blank" rel="noopener noreferrer" hidden>Open original${ICONS.external}</a>`,
+  '</div></div></dialog>',
+);

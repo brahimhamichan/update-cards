@@ -39,7 +39,7 @@ node scripts/render.mjs -c examples/form.json -c examples/checklist.json -o /tmp
 node scripts/render.mjs --check examples/*.json
 ```
 
-Without a webhook the output is a **preview**: controls work, nothing is sent (CSP blocks all network), and submitting shows the payload locally. Read-only cards (status, explanations, proof) need no webhook and render no script at all.
+Without a webhook the output is a **preview**: controls work, nothing is sent (CSP blocks all network), and submitting shows the payload locally. Read-only cards need no webhook and never send anything. Bullet-points, big-text, and explanation cards render no script; proof cards (and any card with a previewable image or playable video) inline one small, separate media script (`src/client/media.mjs`) that reads no config, sends nothing, and has no network access, and no `uc-data` block or webhook code. Input cards add the data block and response runtime (image-choice gets both runtimes).
 
 To send answers back, provision a T3 webhook and supply its URL from the environment or an untracked file — never argv:
 
@@ -69,6 +69,13 @@ Images (including screenshots and video posters) are always local files or image
 
 `video-walkthrough` is the one exception to "no network assets": its `src` may be an absolute http(s) URL. The document's CSP then allows exactly that origin in `media-src` (nothing else; `media-src 'none'` otherwise), and the player uses `preload="none"`, so nothing is fetched until Brahim presses play. A local video file is inlined as `data:` only when it is ≤350 kB — keep recordings hosted over https; never embed large video base64 (T3 caps a document at 512k characters). `javascript:`, `mailto:`, `file:`, `data:` (for video), and credentialed URLs are rejected for media and proof links.
 
+## Image and video full screen
+
+- Images in `screenshot-proof` and `image-choice` are buttons ("View larger: <alt>") opening a modal viewer scoped to that card: fitted image, caption, counter, previous/next (buttons or Left/Right), Zoom (actual pixels, at least 2x for small images; scroll to pan; clicking the image toggles it), Full screen where the host permits, "Open original" when the shot has `href`, and Escape / close / backdrop to close, with focus returned to the thumbnail. Missing or broken images are placeholders, not buttons.
+- `image-choice`: clicking an image only previews. Selecting is the radio row under each image (caption, or "Select"); preview buttons keep working after the card is answered.
+- `video-walkthrough` has a "Full screen" button requesting native full screen on the video (iOS: `webkitEnterFullscreen`). If the host blocks it, the same player expands to fill the card frame (playback continues, no second video) with a note, the "Open video" link when available, Close, and Escape. Autoplay/preload are unchanged.
+- Host requirement: an iframe cannot draw outside its frame. True full screen needs the host iframe to allow it (`allow="fullscreen" allowfullscreen`); otherwise viewer and player fill the frame and say so. Overlays fit the visible part of a tall frame. The demo gallery iframes set both attributes; whether T3's `html_render` frame allows full screen is up to T3.
+
 ## Demo gallery
 
 ```bash
@@ -86,7 +93,7 @@ src/index.mjs        renderer API (renderCards, loadCard, validateCard)
 src/schema.mjs       strict config schemas
 src/templates/       one module per card type
 src/styles.css       the shared stylesheet
-src/client/          response runtime (core.mjs is pure and unit-tested; dom.mjs wires the page)
+src/client/          response runtime (core.mjs is pure and unit-tested; dom.mjs wires the page) and media.mjs (standalone image viewer / video full screen)
 scripts/             render.mjs (CLI), build-demo.mjs
 examples/, assets/   starter configs and offline demo images (assets/samples/ is illustrative artwork)
 test/                node:test suites (unit, CLI, headless-browser runtime)

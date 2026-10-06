@@ -32,7 +32,7 @@ const sections = pages
   .map(
     ({ name, config, html }) => `<section class="g-item">
   <p class="g-label"><span>${esc(config.type)}</span><a href="cards/${esc(name)}.html">examples/${esc(name)}.json</a></p>
-  <div class="g-frame"><iframe title="${esc(config.title)}" sandbox="allow-scripts allow-same-origin" srcdoc="${esc(html)}"></iframe></div>
+  <div class="g-frame"><iframe title="${esc(config.title)}" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" allow="fullscreen" allowfullscreen srcdoc="${esc(html)}"></iframe></div>
 </section>`,
   )
   .join('\n');
