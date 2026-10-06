@@ -1,0 +1,18 @@
+{
+  "type": "checklist",
+  "id": "pre-release",
+  "index": 3,
+  "eyebrow": "Release",
+  "title": "Pre-release checks",
+  "body": "Tick what you have verified. At least three are needed before the release is tagged.",
+  "tone": "warning",
+  "minChecked": 3,
+  "submitLabel": "Save checks",
+  "items": [
+    { "id": "tests", "label": "Full test suite passes", "detail": "Unit and integration, run on the release branch.", "checked": true },
+    { "id": "changelog", "label": "Changelog updated", "checked": true },
+    { "id": "migrations", "label": "Database migrations reviewed", "detail": "Confirm they are backwards compatible.", "href": "https://example.com/docs/migrations", "linkLabel": "Migration guide" },
+    { "id": "flags", "label": "Feature flags default to off" },
+    { "id": "runbook", "label": "Rollback runbook is current", "href": "https://example.com/runbooks/rollback", "linkLabel": "Open runbook" }
+  ]
+}

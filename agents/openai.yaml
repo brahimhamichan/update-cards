@@ -1,0 +1,4 @@
+interface:
+  display_name: "Update Cards"
+  short_description: "Inline next-action and decision cards for T3"
+  default_prompt: "Use $update-cards to turn this reply's Next Actions into an inline decision card."

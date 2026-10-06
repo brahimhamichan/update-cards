@@ -1,0 +1,15 @@
+{
+  "type": "explanation",
+  "id": "rollout-steps",
+  "index": 7,
+  "eyebrow": "Plan",
+  "title": "How the staged rollout works",
+  "tone": "info",
+  "variant": "steps",
+  "steps": [
+    { "title": "Deploy to staging", "detail": "Smoke tests run against the new build." },
+    { "title": "Canary at 5%", "detail": "A small slice of traffic gets the release.", "more": "Error rate and p95 latency are compared with the previous release for 30 minutes. A regression of more than 10% stops the rollout automatically." },
+    { "title": "Ramp to 100%", "detail": "Traffic grows in steps of 25%." }
+  ],
+  "reveal": { "label": "Why not ship everywhere at once?", "body": "A staged rollout limits the blast radius. If something breaks, only a small share of users sees it and rollback takes seconds." }
+}

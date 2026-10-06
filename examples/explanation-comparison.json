@@ -1,0 +1,25 @@
+{
+  "type": "explanation",
+  "id": "hosting-comparison",
+  "index": 8,
+  "eyebrow": "Options",
+  "title": "Where should the API run?",
+  "variant": "comparison",
+  "columns": [
+    { "title": "Edge functions", "summary": "Stateless handlers close to users.", "recommended": true, "points": [
+      { "text": "Low latency worldwide", "kind": "pro" },
+      { "text": "No servers to manage", "kind": "pro" },
+      { "text": "Limited execution time", "kind": "con" }
+    ] },
+    { "title": "Container service", "summary": "Long-running app servers.", "points": [
+      { "text": "Full runtime control", "kind": "pro" },
+      { "text": "Handles long jobs", "kind": "pro" },
+      { "text": "Needs scaling and patching", "kind": "con" }
+    ] },
+    { "title": "Managed platform", "summary": "Push code, get a URL.", "points": [
+      { "text": "Fastest to set up", "kind": "pro" },
+      { "text": "Costs rise with traffic", "kind": "con" },
+      { "text": "Less portable", "kind": "neutral" }
+    ] }
+  ]
+}

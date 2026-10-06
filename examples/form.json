@@ -1,0 +1,32 @@
+{
+  "type": "form",
+  "id": "launch-details",
+  "index": 2,
+  "eyebrow": "Launch",
+  "title": "Confirm the launch details",
+  "body": "Answers feed the release notes and the rollout plan. Nothing ships from this card.",
+  "tone": "info",
+  "submitLabel": "Send details",
+  "allowNote": true,
+  "fields": [
+    { "id": "name", "type": "text", "label": "Release name", "required": true, "placeholder": "Checkout redesign", "maxLength": 80 },
+    { "id": "contact", "type": "text", "inputType": "email", "label": "Owner email", "help": "Used for rollout alerts only.", "placeholder": "owner@example.com" },
+    { "id": "summary", "type": "textarea", "label": "Release summary", "help": "Two or three sentences for the changelog.", "rows": 4, "required": true },
+    { "id": "env", "type": "select", "label": "Target environment", "required": true, "default": "staging", "options": [
+      { "value": "staging", "label": "Staging" },
+      { "value": "canary", "label": "Canary (5% of traffic)" },
+      { "value": "production", "label": "Production" }
+    ] },
+    { "id": "window", "type": "radio", "label": "Rollout window", "required": true, "options": [
+      { "value": "now", "label": "As soon as checks pass" },
+      { "value": "morning", "label": "Tomorrow morning" },
+      { "value": "weekend", "label": "Low-traffic weekend" }
+    ] },
+    { "id": "notify", "type": "checkbox", "label": "Notify", "help": "Pick any that apply.", "default": ["team"], "options": [
+      { "value": "team", "label": "Product team" },
+      { "value": "support", "label": "Support" },
+      { "value": "customers", "label": "Customers (email)" }
+    ] },
+    { "id": "rollback", "type": "checkbox", "label": "Keep a one-click rollback ready", "default": true }
+  ]
+}

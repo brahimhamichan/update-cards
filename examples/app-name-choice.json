@@ -1,0 +1,17 @@
+{
+  "type": "app-name-choice",
+  "id": "app-name",
+  "index": 10,
+  "eyebrow": "Naming",
+  "title": "Choose a name for the new app",
+  "body": "Illustrative names for a demo app. Domain and trademark availability have not been checked.",
+  "tone": "info",
+  "allowNote": true,
+  "options": [
+    { "id": "relay", "name": "Relay", "tagline": "Hand work off without friction.", "rationale": "Short and clear about what the app does.", "recommended": true },
+    { "id": "tally", "name": "Tally", "tagline": "Every decision, counted.", "rationale": "Friendly, but common among finance tools." },
+    { "id": "northstar", "name": "Northstar", "tagline": "Always know what's next.", "rationale": "Memorable, though longer to type." },
+    { "id": "pebble", "name": "Pebble", "tagline": "Small updates, big clarity.", "rationale": "Warm and approachable; less serious." },
+    { "id": "ledgerly", "name": "Ledgerly", "tagline": "A tidy record of every call.", "rationale": "Distinctive, hard to confuse with others." }
+  ]
+}

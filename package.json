@@ -1,0 +1,25 @@
+{
+  "name": "update-cards",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Self-contained HTML next-action, decision, and status cards for agent replies in T3.",
+  "author": "Brahim <brahim@scalingadventures.com>",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "bin": {
+    "update-cards": "./scripts/render.mjs"
+  },
+  "scripts": {
+    "render": "node scripts/render.mjs",
+    "build:demo": "node scripts/build-demo.mjs",
+    "validate": "node scripts/render.mjs --check examples/*.json",
+    "test": "node --test test/*.test.mjs",
+    "ci:local": "npm run validate && npm test && npm run build:demo"
+  }
+}
