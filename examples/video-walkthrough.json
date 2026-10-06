@@ -1,0 +1,37 @@
+{
+  "type": "video-walkthrough",
+  "id": "settings-walkthrough",
+  "index": 11,
+  "eyebrow": "Walkthrough",
+  "title": "Video walkthrough card",
+  "body": "A playable sample clip demonstrating the poster, player, caption, and viewing link.",
+  "src": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "mimeType": "video/mp4",
+  "poster": "../assets/samples/walkthrough-poster.svg",
+  "caption": "Sample video: MDN's CC0 flower clip stands in for a real recording, and the poster is illustrative artwork.",
+  "chapters": [
+    {
+      "time": "0:00",
+      "label": "Opening frame"
+    },
+    {
+      "time": "0:02",
+      "label": "Flowers in focus"
+    },
+    {
+      "time": "0:04",
+      "label": "Closing frame"
+    }
+  ],
+  "linkLabel": "Open video",
+  "facts": [
+    {
+      "label": "Length",
+      "value": "0:05"
+    },
+    {
+      "label": "Source",
+      "value": "Sample clip"
+    }
+  ]
+}

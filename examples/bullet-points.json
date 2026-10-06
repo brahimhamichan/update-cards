@@ -1,0 +1,16 @@
+{
+  "type": "bullet-points",
+  "id": "status-update",
+  "index": 4,
+  "eyebrow": "Status",
+  "title": "Checkout redesign: status update",
+  "tone": "success",
+  "items": [
+    { "text": "Payment form rebuilt", "detail": "Matches the mockups at 320px and 728px.", "status": "done" },
+    { "text": "Address autocomplete", "detail": "About 70% done; `suggest()` still needs error states.", "status": "progress" },
+    { "text": "Tax provider sandbox access", "detail": "Waiting on an API key from finance.", "status": "blocked" },
+    { "text": "Run the accessibility audit", "status": "next" },
+    { "text": "Preview deployed to staging", "status": "info", "href": "https://example.com/preview/checkout", "linkLabel": "Open preview" }
+  ],
+  "footer": "Next update after the tax sandbox is unblocked."
+}

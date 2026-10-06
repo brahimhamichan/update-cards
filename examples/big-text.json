@@ -1,0 +1,13 @@
+{
+  "type": "big-text",
+  "id": "conversion-metric",
+  "index": 5,
+  "eyebrow": "Metric",
+  "title": "Checkout conversion since the redesign",
+  "tone": "success",
+  "value": "4.8%",
+  "label": "Visitor-to-order conversion, last 7 days",
+  "delta": { "text": "+0.6 pts", "direction": "up", "tone": "success" },
+  "supporting": "Up from 4.2% the week before, across roughly 18,000 sessions.",
+  "cta": { "label": "Open dashboard", "href": "https://example.com/dashboards/checkout" }
+}

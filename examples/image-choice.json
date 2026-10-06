@@ -1,0 +1,74 @@
+{
+  "type": "image-choice",
+  "id": "icon-choice",
+  "index": 9,
+  "eyebrow": "Design",
+  "title": "Pick the icon style for the new app",
+  "body": "Choose the mark whose shape and weight feel closest to what you want.",
+  "aspect": "1:1",
+  "imageBackground": "light",
+  "allowNote": true,
+  "notePlaceholder": "What do you like about it?",
+  "options": [
+    {
+      "id": "github",
+      "src": "../assets/logos/github.svg",
+      "alt": "GitHub logo",
+      "caption": "GitHub"
+    },
+    {
+      "id": "spotify",
+      "src": "../assets/logos/spotify.svg",
+      "alt": "Spotify logo",
+      "caption": "Spotify"
+    },
+    {
+      "id": "figma",
+      "src": "../assets/logos/figma.svg",
+      "alt": "Figma logo",
+      "caption": "Figma"
+    },
+    {
+      "id": "discord",
+      "src": "../assets/logos/discord.svg",
+      "alt": "Discord logo",
+      "caption": "Discord"
+    },
+    {
+      "id": "notion",
+      "src": "../assets/logos/notion.svg",
+      "alt": "Notion logo",
+      "caption": "Notion"
+    },
+    {
+      "id": "firefox",
+      "src": "../assets/logos/firefox.svg",
+      "alt": "Firefox logo",
+      "caption": "Firefox"
+    },
+    {
+      "id": "linux",
+      "src": "../assets/logos/linux.svg",
+      "alt": "Linux logo",
+      "caption": "Linux"
+    },
+    {
+      "id": "dropbox",
+      "src": "../assets/logos/dropbox.svg",
+      "alt": "Dropbox logo",
+      "caption": "Dropbox"
+    },
+    {
+      "id": "airbnb",
+      "src": "../assets/logos/airbnb.svg",
+      "alt": "Airbnb logo",
+      "caption": "Airbnb"
+    },
+    {
+      "id": "pinterest",
+      "src": "../assets/logos/pinterest.svg",
+      "alt": "Pinterest logo",
+      "caption": "Pinterest"
+    }
+  ]
+}

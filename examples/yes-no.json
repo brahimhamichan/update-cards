@@ -1,0 +1,11 @@
+{
+  "type": "yes-no",
+  "id": "ship-staging",
+  "index": 1,
+  "title": "Ship the checkout redesign to staging?",
+  "body": "Example decision: choose whether a hypothetical checkout redesign is ready for `staging`. This demo records your answer without deploying anything.",
+  "yesLabel": "Ship to staging",
+  "noLabel": "Not yet",
+  "allowNote": true,
+  "notePlaceholder": "Anything to change first?"
+}

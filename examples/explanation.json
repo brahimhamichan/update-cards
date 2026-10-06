@@ -1,0 +1,16 @@
+{
+  "type": "explanation",
+  "id": "webhook-lifecycle",
+  "index": 6,
+  "eyebrow": "How it works",
+  "title": "What happens after you answer a card",
+  "body": "Your answer is posted once and the card locks.",
+  "variant": "flow",
+  "nodes": [
+    { "label": "Card", "detail": "You pick an option and press send." },
+    { "label": "Webhook", "detail": "The answer is posted as JSON." },
+    { "label": "Agent", "detail": "The agent reads it and continues." },
+    { "label": "Confirmation", "detail": "The agent confirms receipt in chat." }
+  ],
+  "reveal": { "label": "What if sending fails?", "body": "The card shows an error and stays editable, so you can retry without losing your answer." }
+}

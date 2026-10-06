@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Update Cards icon</title>
+  <desc id="desc">A stack of blue cards with a white check mark and two answer rows.</desc>
+  <defs><linearGradient id="blue" x2="1" y2="1"><stop stop-color="#5685ff"/><stop offset="1" stop-color="#244ce2"/></linearGradient></defs>
+  <rect width="256" height="256" rx="64" fill="#101828"/>
+  <rect x="65" y="42" width="148" height="154" rx="22" fill="#4163aa" transform="rotate(11 139 119)"/>
+  <rect x="47" y="51" width="152" height="154" rx="22" fill="#7797ef" transform="rotate(-7 123 128)"/>
+  <rect x="48" y="58" width="152" height="156" rx="22" fill="url(#blue)"/>
+  <rect x="66" y="80" width="47" height="47" rx="14" fill="#fff"/>
+  <path d="m78 103 8 8 16-18" fill="none" stroke="#315fe9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M129 91h47M129 108h34" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+  <rect x="67" y="147" width="115" height="19" rx="9.5" fill="#fff" fill-opacity=".22"/>
+  <rect x="67" y="179" width="83" height="12" rx="6" fill="#fff" fill-opacity=".6"/>
+</svg>

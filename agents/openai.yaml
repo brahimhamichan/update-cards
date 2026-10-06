@@ -1,0 +1,7 @@
+interface:
+  display_name: "Update Cards"
+  short_description: "Inline next-action and decision cards for T3"
+  icon_small: "./assets/brand/icon.png"
+  icon_large: "./assets/brand/icon.svg"
+  brand_color: "#315FE9"
+  default_prompt: "Use $update-cards to turn this reply's Next Actions into an inline decision card."
