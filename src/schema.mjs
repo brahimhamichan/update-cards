@@ -111,11 +111,10 @@ const SCHEMAS = {
     items: req(
       arr(
         obj({
-          label: str(60),
-          problem: req(str(220)),
-          solution: req(str(240)),
+          problem: req(str(160)),
+          solution: req(str(160)),
           status: oneOf('needs-you', 'blocked', 'proposed', 'fixing', 'solved'),
-          ask: str(160),
+          ask: str(120),
           ...linkFields,
         }),
         1,

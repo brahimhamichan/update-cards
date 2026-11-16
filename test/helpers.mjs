@@ -33,7 +33,7 @@ export const CARDS = {
     type: 'problem-solution',
     id: 'ps',
     title: 'Status',
-    items: [{ label: 'Pixel', problem: 'Lost <b>sales</b>', solution: 'Use `CAPI`', status: 'needs-you', ask: 'Approve' }, { problem: 'Slow', solution: 'Cache', status: 'solved' }],
+    items: [{ problem: 'Lost <b>sales</b>', solution: 'Use `CAPI`', status: 'needs-you', ask: 'Approve' }, { problem: 'Slow', solution: 'Cache', status: 'solved' }],
   },
   'big-text': { type: 'big-text', id: 'bt', title: 'Result', value: '42%', delta: { text: '+3', direction: 'up' } },
   'explanation-steps': { type: 'explanation', id: 'ex1', title: 'How', variant: 'steps', steps: [{ title: 'One' }, { title: 'Two' }] },

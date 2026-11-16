@@ -6,7 +6,7 @@ Notable changes to update-cards are recorded here. Changes stay under **Unreleas
 
 ### Added
 
-- `problem-solution` card: compact problem → solution rows with status, a status summary, and highlighted asks.
+- `problem-solution` card: one line per problem (status dot, problem → solution, optional ask).
 - Eleven card types and thirteen starter examples for decisions, forms, choices, status, explanations, and visual proof.
 - Dependency-free Node.js renderer and CLI with config validation, escaped text, embedded images, and origin-scoped callback/video policies.
 - Responsive light/dark layouts, keyboard interaction, and explicit preview and live response modes.

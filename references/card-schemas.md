@@ -83,8 +83,8 @@ Values: `{ choice: id, note? }`. Start from `examples/app-name-choice.json`.
 
 ## problem-solution (read-only)
 
-`items` (required, 1–8): `problem` (required, ≤220), `solution` (required, ≤240), `label` (≤60), `status` (`needs-you`, `blocked`, `proposed` (default), `fixing`, `solved`), `ask` (≤160, what the user must do; shown highlighted), `href`, `linkLabel` (≤40). `footer` (≤240).
-Two or more items get numbers and a status summary. One sentence per field. No payload; pair with an input card (`yes-no`, `form`) when the user must answer. Start from `examples/problem-solution.json`.
+`items` (required, 1–8): `problem` (required, ≤160), `solution` (required, ≤160), `status` (`needs-you`, `blocked`, `proposed` (default), `fixing`, `solved`; shown as a colored dot), `ask` (≤120, what the user must do), `href`, `linkLabel` (≤40). `footer` (≤240).
+One line per problem. Keep each field to a short phrase. No payload; pair with an input card (`yes-no`, `form`) when the user must answer. Start from `examples/problem-solution.json`.
 
 ## bullet-points (read-only)
 

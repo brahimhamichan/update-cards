@@ -64,7 +64,7 @@ The inline skill needs T3's `html_preview` and `html_render` tools. Live replies
 | [`checklist`](examples/checklist.json) | Items with a progress indicator | `{ checked, unchecked, note? }` |
 | [`image-choice`](examples/image-choice.json) | Up to 24 images or logos | `{ choice, note? }` |
 | [`app-name-choice`](examples/app-name-choice.json) | Names, taglines, and a recommendation | `{ choice, note? }` |
-| [`problem-solution`](examples/problem-solution.json) | One or more problems, each with its fix, status, and any ask | Read-only |
+| [`problem-solution`](examples/problem-solution.json) | One line per problem: status dot, problem → solution, any ask | Read-only |
 | [`bullet-points`](examples/bullet-points.json) | Status, progress, blockers, and next steps | Read-only |
 | [`big-text`](examples/big-text.json) | A prominent number or outcome | Read-only |
 | [`explanation`](examples/explanation.json) | [Flows](examples/explanation.json), [steps](examples/explanation-steps.json), or [comparisons](examples/explanation-comparison.json) | Read-only |
