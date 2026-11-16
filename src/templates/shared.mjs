@@ -5,6 +5,7 @@ const DEFAULT_EYEBROW = {
   form: 'Details needed',
   checklist: 'Checklist',
   'bullet-points': 'Update',
+  'problem-solution': 'Problem → solution',
   'big-text': 'Result',
   explanation: 'How it works',
   'image-choice': 'Pick one',

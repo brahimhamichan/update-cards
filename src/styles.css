@@ -368,6 +368,62 @@ input:is([type="checkbox"], [type="radio"]):disabled { cursor: default; opacity:
 .uc-bullet-detail { font-size: 12.5px; color: var(--uc-muted); }
 .uc-foot-note { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--uc-hair); font-size: 12.5px; color: var(--uc-muted); }
 
+/* ── Problem → solution ────────────────────────────────── */
+.uc-ps-summary { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.uc-ps-chip, .uc-ps-badge {
+  --c: var(--uc-faint);
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px; border-radius: 999px;
+  font: 600 10.5px/1.2 var(--uc-font); letter-spacing: 0.03em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--c) 75%, var(--uc-card-fg));
+  background: color-mix(in oklab, var(--c) 13%, var(--uc-card));
+}
+.uc-ps-chip::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+:is(.uc-ps-chip, .uc-ps)[data-status="needs-you"] { --c: var(--uc-warning); }
+:is(.uc-ps-chip, .uc-ps)[data-status="blocked"] { --c: var(--uc-error); }
+:is(.uc-ps-chip, .uc-ps)[data-status="proposed"] { --c: var(--uc-primary); }
+:is(.uc-ps-chip, .uc-ps)[data-status="fixing"] { --c: var(--uc-info); }
+:is(.uc-ps-chip, .uc-ps)[data-status="solved"] { --c: var(--uc-success); }
+.uc-ps-list { display: grid; gap: 10px; }
+.uc-ps {
+  display: grid; gap: 8px;
+  padding: 10px 12px 11px;
+  border: 1px solid var(--uc-hair); border-left: 3px solid color-mix(in oklab, var(--c) 70%, var(--uc-card));
+  border-radius: 10px;
+  background: var(--uc-subtle);
+}
+.uc-ps .uc-ps-badge { --c: inherit; margin-left: auto; flex: none; white-space: nowrap; }
+.uc-ps-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.uc-ps-num {
+  flex: none; display: grid; place-items: center;
+  width: 20px; height: 20px; border-radius: 6px;
+  font: 600 11px/1 var(--uc-mono);
+  color: var(--uc-card-fg); background: var(--uc-card); border: 1px solid var(--uc-hair);
+}
+.uc-ps-label { font-size: 13.5px; font-weight: 600; color: var(--uc-card-fg); min-width: 0; }
+.uc-ps-pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: start; }
+.uc-ps-cell { display: grid; gap: 2px; min-width: 0; font-size: 13px; line-height: 1.45; text-wrap: pretty; }
+.uc-ps-problem p { color: var(--uc-muted); }
+.uc-ps-solution p { color: var(--uc-card-fg); }
+.uc-ps-tag {
+  font: 600 10px/1.4 var(--uc-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--uc-faint);
+}
+.uc-ps-solution .uc-ps-tag { color: color-mix(in oklab, var(--uc-success) 70%, var(--uc-card-fg)); }
+.uc-ps-arrow { display: grid; place-items: center; padding-top: 14px; color: var(--uc-faint); }
+.uc-ps-ask {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 6px 9px; border-radius: 8px;
+  font-size: 13px; font-weight: 550; color: var(--uc-card-fg);
+  background: color-mix(in oklab, var(--uc-warning) 14%, var(--uc-card));
+}
+.uc-ps-ask .uc-ps-tag { flex: none; color: color-mix(in oklab, var(--uc-warning) 55%, var(--uc-card-fg)); }
+.uc-ps-link { justify-self: start; font-size: 12.5px; }
+@container card (max-width: 480px) {
+  .uc-ps-pair { grid-template-columns: 1fr; gap: 6px; }
+  .uc-ps-arrow { display: none; }
+  .uc-ps-solution { padding-top: 6px; border-top: 1px dashed var(--uc-hair); }
+}
+
 /* ── Big text ──────────────────────────────────────────── */
 .uc-big-text .uc-head { gap: 4px; }
 .uc-big-text .uc-title { font-size: 14px; font-weight: 560; color: var(--uc-muted); letter-spacing: 0; }

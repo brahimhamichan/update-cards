@@ -29,6 +29,12 @@ export const CARDS = {
   },
   checklist: { type: 'checklist', id: 'cl', title: 'Checks', items: [{ id: 'a', label: 'A', checked: true }, { id: 'b', label: 'B' }] },
   'bullet-points': { type: 'bullet-points', id: 'bp', title: 'Status', items: [{ text: 'Done', status: 'done' }, { text: 'Next', status: 'next' }] },
+  'problem-solution': {
+    type: 'problem-solution',
+    id: 'ps',
+    title: 'Status',
+    items: [{ label: 'Pixel', problem: 'Lost <b>sales</b>', solution: 'Use `CAPI`', status: 'needs-you', ask: 'Approve' }, { problem: 'Slow', solution: 'Cache', status: 'solved' }],
+  },
   'big-text': { type: 'big-text', id: 'bt', title: 'Result', value: '42%', delta: { text: '+3', direction: 'up' } },
   'explanation-steps': { type: 'explanation', id: 'ex1', title: 'How', variant: 'steps', steps: [{ title: 'One' }, { title: 'Two' }] },
   'explanation-flow': { type: 'explanation', id: 'ex2', title: 'How', variant: 'flow', nodes: [{ label: 'A' }, { label: 'B' }] },

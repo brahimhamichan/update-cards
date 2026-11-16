@@ -1,0 +1,30 @@
+{
+  "type": "problem-solution",
+  "id": "funnel-status",
+  "index": 1,
+  "eyebrow": "Status",
+  "title": "Checkout funnel: 3 problems",
+  "items": [
+    {
+      "label": "Purchases missing in Meta",
+      "problem": "Meta shows 12 purchases yesterday; Stripe shows 31.",
+      "solution": "Send purchases server-side through CAPI with the same event ID as the pixel.",
+      "status": "needs-you",
+      "ask": "Approve the CAPI change on the live pixel."
+    },
+    {
+      "label": "Slow thank-you page",
+      "problem": "The page takes 6 s to load on mobile.",
+      "solution": "Lazy-load the video embed and compress the hero image.",
+      "status": "fixing",
+      "href": "https://example.com/preview/thank-you",
+      "linkLabel": "Open preview"
+    },
+    {
+      "label": "Broken coupon field",
+      "problem": "Codes with lowercase letters were rejected.",
+      "solution": "Uppercase codes before the `validateCoupon()` check.",
+      "status": "solved"
+    }
+  ]
+}

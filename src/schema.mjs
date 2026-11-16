@@ -107,6 +107,23 @@ const SCHEMAS = {
     items: req(arr(obj({ text: req(str(240)), detail: str(240), status: oneOf('done', 'progress', 'blocked', 'next', 'info'), ...linkFields }), 1, 12)),
     footer: str(240),
   },
+  'problem-solution': {
+    items: req(
+      arr(
+        obj({
+          label: str(60),
+          problem: req(str(220)),
+          solution: req(str(240)),
+          status: oneOf('needs-you', 'blocked', 'proposed', 'fixing', 'solved'),
+          ask: str(160),
+          ...linkFields,
+        }),
+        1,
+        8,
+      ),
+    ),
+    footer: str(240),
+  },
   'big-text': {
     value: req(str(24)),
     label: str(80),

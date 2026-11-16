@@ -12,6 +12,7 @@ import * as bulletPoints from './templates/bullet-points.mjs';
 import * as checklist from './templates/checklist.mjs';
 import * as explanation from './templates/explanation.mjs';
 import * as form from './templates/form.mjs';
+import * as problemSolution from './templates/problem-solution.mjs';
 import * as imageChoice from './templates/image-choice.mjs';
 import * as screenshotProof from './templates/screenshot-proof.mjs';
 import * as videoWalkthrough from './templates/video-walkthrough.mjs';
@@ -26,6 +27,7 @@ const TEMPLATES = {
   form,
   checklist,
   'bullet-points': bulletPoints,
+  'problem-solution': problemSolution,
   'big-text': bigText,
   explanation,
   'image-choice': imageChoice,
