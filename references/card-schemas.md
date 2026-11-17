@@ -11,6 +11,7 @@ Source of truth: `src/schema.mjs`. Unknown keys are errors. Check a config with 
 | Confirm a list of checks | `checklist` | yes |
 | Pick from logos, screenshots, or images | `image-choice` | yes |
 | Pick a product or feature name | `app-name-choice` | yes |
+| Status update or ask, framed as problem → solution | `problem-solution` | no |
 | Share progress or status | `bullet-points` | no |
 | Highlight one number | `big-text` | no |
 | Explain a process, plan, or tradeoff | `explanation` | no |
@@ -79,6 +80,11 @@ Values: `{ choice: id, note? }`. Start from `examples/image-choice.json`.
 
 `options` (required, 2–12, unique `id`): `id`, `name` (≤40) required; `tagline` (≤90), `rationale` (≤240), `recommended` (at most one option).
 Values: `{ choice: id, note? }`. Start from `examples/app-name-choice.json`.
+
+## problem-solution (read-only)
+
+`items` (required, 1–8): `problem` (required, ≤160), `solution` (required, ≤160), `status` (`needs-you`, `blocked`, `proposed` (default), `fixing`, `solved`; shown as a colored dot), `ask` (≤120, what the user must do), `href`, `linkLabel` (≤40). `footer` (≤240).
+One line per problem. Keep each field to a short phrase. No payload; pair with an input card (`yes-no`, `form`) when the user must answer. Start from `examples/problem-solution.json`.
 
 ## bullet-points (read-only)
 

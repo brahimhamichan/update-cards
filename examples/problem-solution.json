@@ -1,0 +1,25 @@
+{
+  "type": "problem-solution",
+  "id": "funnel-status",
+  "title": "Checkout funnel",
+  "items": [
+    {
+      "problem": "Meta shows 12 purchases, Stripe shows 31",
+      "solution": "Send purchases via CAPI",
+      "status": "needs-you",
+      "ask": "Approve the pixel change"
+    },
+    {
+      "problem": "Thank-you page takes 6 s on mobile",
+      "solution": "Lazy-load the video, compress the hero",
+      "status": "fixing",
+      "href": "https://example.com/preview/thank-you",
+      "linkLabel": "Preview"
+    },
+    {
+      "problem": "Lowercase coupon codes rejected",
+      "solution": "Uppercase codes before checking",
+      "status": "solved"
+    }
+  ]
+}

@@ -7,6 +7,8 @@ description: Render reusable HTML cards in T3 for next actions, decisions, forms
 
 Self-contained HTML cards that become the **Next Actions** of a T3 reply. Everything lives in this skill directory: `scripts/render.mjs` (CLI, Node 22+), `examples/*.json` (one starter config per card type), and `src/` (renderer API: `renderCards`, `validateCard`).
 
+**Default for status updates and asks:** when the user asks for a status update, or the agent needs something from them, lead with a `problem-solution` card (one item per problem; set `ask` on items that need them). Add a `yes-no`/`form` card under it when they must answer.
+
 Use cards only in T3 (where `html_preview`/`html_render` exist) and only when they help: a decision, a choice, details to fill in, a status/result worth seeing at a glance, or proof of a visual change. Plain text is better for trivial answers.
 
 ## Pick a card
@@ -18,6 +20,7 @@ Use cards only in T3 (where `html_preview`/`html_render` exist) and only when th
 | Tick off what is done/approved | `checklist` | `examples/checklist.json` |
 | Choose among images or logos | `image-choice` | `examples/image-choice.json` |
 | Choose a name | `app-name-choice` | `examples/app-name-choice.json` |
+| Status update or ask: what broke, what fixes it, what you need | `problem-solution` | `examples/problem-solution.json` |
 | Nothing — status update (FYI) | `bullet-points` | `examples/bullet-points.json` |
 | Nothing — one key number/outcome | `big-text` | `examples/big-text.json` |
 | Nothing — steps, flow, comparison | `explanation` | `examples/explanation*.json` |

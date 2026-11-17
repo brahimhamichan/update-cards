@@ -8,7 +8,7 @@ import { CARDS, ENDPOINT, EXAMPLES, LIVE, TINY_SVG, count, dataBlock, imageChoic
 import { loadCard } from '../src/index.mjs';
 
 const INTERACTIVE = ['yes-no', 'form', 'checklist', 'app-name-choice'];
-const READONLY = ['bullet-points', 'big-text', 'explanation-steps', 'explanation-flow', 'explanation-comparison'];
+const READONLY = ['problem-solution', 'bullet-points', 'big-text', 'explanation-steps', 'explanation-flow', 'explanation-comparison'];
 const PROOF = ['video-walkthrough', 'screenshot-proof'];
 const scripts = (html) => [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
 const externalRef = (html) => html.match(/\b(?:src|href)\s*=\s*["']https?:[^"']*/gi) ?? [];
@@ -312,4 +312,13 @@ test('proof cards resolve relative assets via loadCard and baseDir', () => {
   assert.ok(!missing.html.includes('class="uc-view"') && !missing.html.includes('<dialog'), 'missing shots are not buttons');
   assert.equal(scriptTags(missing.html), 0);
   assert.match(missing.html, /Screenshot unavailable/);
+});
+
+test('problem-solution: escapes text, one row per item, status dot, ask, defaults to proposed', () => {
+  const { html } = renderCard(CARDS['problem-solution']);
+  assert.ok(html.includes('Lost &lt;b&gt;sales&lt;/b&gt;') && html.includes('<code>CAPI</code>'));
+  assert.equal(count(html, '<li class="uc-ps"'), 2);
+  assert.ok(html.includes('<b>You:</b> Approve') && html.includes('title="Needs you"'));
+  const single = renderCard({ ...CARDS['problem-solution'], items: [{ problem: 'P', solution: 'S' }] }).html;
+  assert.ok(single.includes('data-status="proposed"') && !single.includes('class="uc-ps-ask"'));
 });
